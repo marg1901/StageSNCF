@@ -1,0 +1,16 @@
+<wcs-grid [data]="cups" id="grid-simple-1" selection-config="none" rowIdPath="name" [loading]="loading">
+    <wcs-grid-column name="Nom" path="name"></wcs-grid-column>
+    <wcs-grid-column name="Date de création" id="date" [customCells]="true"></wcs-grid-column>
+    <wcs-grid-column name="Volume" id="volume" [customCells]="true"></wcs-grid-column>
+    <wcs-grid-column name="Couleur" id="color" [customCells]="true"></wcs-grid-column>
+    <wcs-grid-column name="Actions" id="action" [customCells]="true"></wcs-grid-column>
+
+    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="date" [rowId]="row.name">{{row.date |
+        date}}</wcs-grid-custom-cell>
+    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="volume" [rowId]="row.name">{{row.volume |
+        liter}}</wcs-grid-custom-cell>
+    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="color" [rowId]="row.name"><app-badge
+            [color]="row.color"></app-badge></wcs-grid-custom-cell>
+    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="action" [rowId]="row.name"><app-delete
+            (toto)="dataEmitFromChild(row)"></app-delete></wcs-grid-custom-cell>
+</wcs-grid>

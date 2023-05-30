@@ -1,0 +1,37 @@
+<form [formGroup]="userForm">
+    <wcs-form-field [isError]="userForm.controls.name.invalid">
+        <wcs-label for="name">Nom</wcs-label>
+        <wcs-input id="name" type="text" formControlName="name" placeholder="Margaux BEGARD" required
+            [disabled]="loading"></wcs-input>
+        <wcs-error> {{ getMessage(userForm.controls.name) }} </wcs-error>
+    </wcs-form-field>
+
+    <wcs-form-field [isError]="userForm.controls.date.invalid">
+        <wcs-label for=" date">Date de création:</wcs-label>
+        <wcs-input id="date" type="date" required formControlName="date" [disabled]="loading"></wcs-input>
+        <wcs-error> {{ getMessage(userForm.controls.date) }} </wcs-error>
+    </wcs-form-field>
+
+    <wcs-form-field [isError]="userForm.controls.volume.invalid">
+        <wcs-label for="volume">Quantité:</wcs-label>
+        <wcs-input id="volume" type="number" required formControlName="volume" [disabled]="loading"></wcs-input>
+        <wcs-error> {{ getMessage(userForm.controls.volume) }} </wcs-error>
+    </wcs-form-field>
+
+    <wcs-form-field [isError]="userForm.controls.color.invalid">
+        <wcs-label for="color">Couleur:</wcs-label>
+        <wcs-select id="leselect" placeholder="Choix de la couleur" formControlName="color" [disabled]="loading"
+            required>
+            <wcs-select-option value="BLANC">Blanc</wcs-select-option>
+            <wcs-select-option value="BLEU">Bleu</wcs-select-option>
+            <wcs-select-option value="ROUGE">Rouge</wcs-select-option>
+            <wcs-select-option value="VERT">Vert</wcs-select-option>
+        </wcs-select>
+        <wcs-error> {{ getMessage(userForm.controls.color) }} </wcs-error>
+    </wcs-form-field>
+    <br>
+
+    <wcs-button [loading]="loading" class="wcs-warning" mode="" shape="" (click)="validate()">
+        Valider
+    </wcs-button>
+</form>

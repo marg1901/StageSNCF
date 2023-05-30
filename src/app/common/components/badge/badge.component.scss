@@ -1,0 +1,17 @@
+.badge {
+    height: 10px;
+    width: 50px;
+    border: solid;
+
+    &--vert {
+        background-color: rgb(28, 239, 28);
+    }
+
+    &--bleu {
+        background-color: rgb(28, 192, 189);
+    }
+
+    &--rouge {
+        background-color: rgb(239, 0, 0);
+    }
+}
