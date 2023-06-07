@@ -4,21 +4,18 @@ export class Cup {
   date: string;
   volume: number | null;
   color: string;
-  action: string;
 
   constructor(
     idParam: string,
     nameParam: string,
     dateParam: string,
     volumeParam: number | null,
-    colorParam: string,
-    actionParam: string
+    colorParam: string
   ) {
     this.id = idParam;
     this.name = nameParam;
     this.date = dateParam;
     this.volume = volumeParam;
     this.color = colorParam;
-    this.action = actionParam;
   }
 }

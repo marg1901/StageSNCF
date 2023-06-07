@@ -44,4 +44,9 @@ export class HomeComponent implements OnInit {
   sumCups(): number {
     return this.cups.length;
   }
+
+  dataPagination(event: any): void {
+    console.log(event);
+    this.dataPagination = event;
+  }
 }

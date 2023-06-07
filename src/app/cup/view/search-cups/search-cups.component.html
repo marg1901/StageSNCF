@@ -1,16 +1,35 @@
-<wcs-grid [data]="cups" id="grid-simple-1" selection-config="none" rowIdPath="name" [loading]="loading">
-    <wcs-grid-column name="Nom" path="name"></wcs-grid-column>
-    <wcs-grid-column name="Date de création" id="date" [customCells]="true"></wcs-grid-column>
-    <wcs-grid-column name="Volume" id="volume" [customCells]="true"></wcs-grid-column>
-    <wcs-grid-column name="Couleur" id="color" [customCells]="true"></wcs-grid-column>
+<wcs-grid [data]="cups" id="grid-simple-1" selection-config="none" rowIdPath="id" [loading]="loading" server-mode="">
+    <!-- name -->
+    <wcs-grid-column sort="" name="Nom" path="name" (wcsSortChange)="gridSort($event)"></wcs-grid-column>
+
+    <!-- date -->
+    <wcs-grid-column name="Date de création" id="date" [customCells]="true" sort=""
+        (wcsSortChange)="gridSort($event)"></wcs-grid-column>
+
+    <wcs-grid-custom-cell *ngFor=" let row of cups" columnId="date" [rowId]="row.id">{{row.date |
+        date}}</wcs-grid-custom-cell>
+
+    <!-- volume -->
+    <wcs-grid-column name="Volume" id="volume" [customCells]="true" sort=""
+        (wcsSortChange)="gridSort($event)"></wcs-grid-column>
+
+    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="volume" [rowId]="row.id">{{row.volume |
+        liter}}</wcs-grid-custom-cell>
+
+    <!-- color -->
+    <wcs-grid-column name="Couleur" id="color" [customCells]="true" [sort]="true"
+        (wcsSortChange)="gridSort($event)"></wcs-grid-column>
+
+    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="color" [rowId]="row.id"><app-badge
+            [color]="row.color"></app-badge></wcs-grid-custom-cell>
+
+    <!-- action -->
     <wcs-grid-column name="Actions" id="action" [customCells]="true"></wcs-grid-column>
 
-    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="date" [rowId]="row.name">{{row.date |
-        date}}</wcs-grid-custom-cell>
-    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="volume" [rowId]="row.name">{{row.volume |
-        liter}}</wcs-grid-custom-cell>
-    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="color" [rowId]="row.name"><app-badge
-            [color]="row.color"></app-badge></wcs-grid-custom-cell>
-    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="action" [rowId]="row.name"><app-delete
+    <wcs-grid-custom-cell *ngFor="let row of cups" columnId="action" [rowId]="row.id"><app-delete
             (toto)="dataEmitFromChild(row)"></app-delete></wcs-grid-custom-cell>
+
+    <!-- pagination -->
+    <wcs-grid-pagination (wcsGridPaginationChange)="gridPaginationChange($event)" [availablePageSizes]="[2, 5, 10]"
+        [pageCount]="count" [pageSize]="size" [itemsCount]="total"></wcs-grid-pagination>
 </wcs-grid>

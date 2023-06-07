@@ -1,17 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+// Tout composant de votre application qui devra utiliser l’état de votre application devra souscrire au Store via des ‘selectors’.
+// Une fois que le composant est souscrit au Store, il devra par exemple modifier l’état du ‘Store’ via une action.
+
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NewCup } from '../../../model/newCup.model';
 import { CupService } from 'src/app/service/cup.service';
 import { ToastrService } from 'ngx-toastr';
 import { Store } from '@ngxs/store';
 import { CupAction } from 'src/app/store/cup/cup.action';
+import { CupSelector } from 'src/app/store/cup/cup.selectors';
+import { Observable, Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-create-cup',
   templateUrl: './create-cup.component.html',
   styleUrls: ['./create-cup.component.scss'],
 })
-export class CreateCupComponent implements OnInit {
+export class CreateCupComponent implements OnInit, OnDestroy {
   userForm = new FormGroup({
     name: new FormControl<string | null>('Name', [Validators.required]),
     date: new FormControl<string | null>('2023-01-19', [Validators.required]),
@@ -25,15 +30,19 @@ export class CreateCupComponent implements OnInit {
 
   loading = false;
 
-  constructor(
-    private cupService: CupService,
-    private japelleCommeJeVeux: ToastrService,
-    private store: Store
-  ) {}
-
-  ngOnInit(): void {
-    // this.store.dispatch(CupAction.Create);
+  constructor(private toastr: ToastrService, private store: Store) {
+    this.store
+      .select(CupSelector.getCreateLoading)
+      .subscribe((value) => (this.loading = value));
   }
+
+  destroy$ = new Subject<void>();
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
+
+  ngOnInit(): void {}
 
   getMessage(control: FormControl): string {
     if (control.errors?.['required']) {
@@ -48,15 +57,6 @@ export class CreateCupComponent implements OnInit {
   }
 
   validate(): void {
-    // console.log(this.userForm.value)
-    // console.log(this.userForm.dirty)
-    // console.log(this.userForm.value.name);
-    // console.log(this.userForm.controls.name.value);
-    // console.log(this.userForm.controls.name.dirty);
-    // console.log(this.userForm.controls.name.errors);
-    // console.log(this.userForm.controls.volume.errors);
-
-    console.log(this.userForm.invalid);
     if (this.userForm.valid) {
       const value = this.userForm.value;
       const cup = new NewCup(
@@ -66,24 +66,22 @@ export class CreateCupComponent implements OnInit {
         value.color!
       );
 
-      this.store.dispatch(new CupAction.Create(cup));
-      this.loading = true;
       this.userForm.disable();
-      this.cupService.createCup(cup).subscribe({
-        next: () => {
-          this.japelleCommeJeVeux.success('Cup Créée');
-          this.loading = false;
-          this.userForm.enable();
-          this.userForm.reset();
-        },
+      this.store
+        .dispatch(new CupAction.Create(cup))
+        .pipe(takeUntil(this.destroy$)) // pour detruire la souscription lors de la destruction du composant
+        .subscribe({
+          next: () => {
+            this.toastr.success('Cup Créée');
+            this.userForm.enable();
+            // TODO this.userForm.reset();
+          },
 
-        error: () => {
-          console.log('error');
-          this.japelleCommeJeVeux.error("La cup n'a pas pu être créée.");
-          this.loading = false;
-          this.userForm.enable();
-        },
-      });
+          error: () => {
+            this.toastr.error("La cup n'a pas pu être créée.");
+            this.userForm.enable();
+          },
+        });
     }
   }
 }
